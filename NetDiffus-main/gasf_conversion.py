@@ -1,13 +1,13 @@
-import pandas as pd
+import pandas as pd # type: ignore
 import numpy as np
 import os
-from pyts.image import GramianAngularField
+from pyts.image import GramianAngularField # type: ignore
 import matplotlib.pyplot as plt
-from skimage.transform import resize
+from skimage.transform import resize # type: ignore
 
 # Percorsi dei file
-file_path = "Mirage2019/Mirage-2019.parquet"  # File Parquet di input
-save_dir = "Mirage2019/output"  # Directory per salvare le immagini GASF
+file_path = "../dataset/Mirage-2019.parquet"  # File Parquet di input
+save_dir = "../dataset/output"  # Directory per salvare le immagini GASF
 n = 100  # Numero di righe (serie temporali) da processare per ogni label
 
 # Assicura che la directory di output esista
