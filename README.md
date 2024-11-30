@@ -12,8 +12,9 @@ pip install:
 
 
 #### Esecuzione dello script per avviare il training
+Portarsi all'interno della cartella NetDiffus-main
 ```bash
-python scripts/image_train.py --data_dir <gasf_image_path> --image_size 128 --num_channels 64 --num_res_blocks 2 --diffusion_steps 1000 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 1e-4 --batch_size 4
+python3 scripts/image_train.py --data_dir dataset/output/ --image_size 128 --num_channels 64 --num_res_blocks 2 --diffusion_steps 1000 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 1e-4 --batch_size 4
 ```
 
 ### Link utili
