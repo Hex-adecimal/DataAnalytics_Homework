@@ -3,12 +3,11 @@ import numpy as np
 import os
 from pyts.image import GramianAngularField
 import matplotlib.pyplot as plt
-from skimage.transform import resize
 
 # Percorsi dei file
-file_path = "Mirage2019/Mirage-2019.parquet"  # File Parquet di input
-save_dir = "Mirage2019/output"  # Directory per salvare le immagini GASF
-n = 1  # Numero di righe (serie temporali) da processare per ogni label
+file_path = "../dataset/Mirage-2019.parquet"  # File Parquet di input
+save_dir = "../dataset/output"  # Directory per salvare le immagini GASF
+n = 5  # Numero di righe (serie temporali) da processare per ogni label
 
 # Assicura che la directory di output esista
 if not os.path.exists(save_dir):
@@ -46,6 +45,9 @@ X = np.array(all_series)
 
 # Calcolo del GASF
 gasf = GramianAngularField(sample_range=(0, 1), method='summation')
+#TODO
+#fare qui la  min-max normalization e poi fare la seguente chiamata
+#gasf = GramianAngularField(sample_range=None, method='summation')
 X_gasf = gasf.transform(X)
 
 # Salvataggio delle immagini per ogni classe
@@ -63,12 +65,9 @@ for idx, (index, row) in enumerate(df_grouped.iterrows()):
     gamma = 0.25
     gasf_img = np.power(gasf_img, gamma)
 
-    # Ridimensiona l'immagine a 128x128
-    gasf_img_resized = resize(gasf_img, (10, 10), anti_aliasing=True)
-
     # Salva l'immagine nella directory della classe
     filename = f"sample_{index + 1}.png"
     filepath = os.path.join(class_dir, filename)
-    plt.imsave(filepath, gasf_img_resized, cmap='viridis')
+    plt.imsave(filepath, gasf_img, cmap='viridis')
 
     print(f"Serie {index} salvata come immagine in {filepath}.")

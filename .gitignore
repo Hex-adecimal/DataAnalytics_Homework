@@ -1,7 +1,11 @@
 ### Dataset ###
 dataset/output/
 
+### Training ###
+128/
+
 ### Python ###
+__pycache__/
 *.pyc
 
 ### Editor ###
