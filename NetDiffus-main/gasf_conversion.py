@@ -3,11 +3,14 @@ import numpy as np
 import os
 from pyts.image import GramianAngularField
 import matplotlib.pyplot as plt
+from skimage.transform import resize
+import sys
+print(sys.executable)
 
 # Percorsi dei file
-file_path = "../dataset/Mirage-2019.parquet"  # File Parquet di input
-save_dir = "../dataset/output"  # Directory per salvare le immagini GASF
-n = 5  # Numero di righe (serie temporali) da processare per ogni label
+file_path = "Mirage2019/Mirage-2019.parquet"  # File Parquet di input
+save_dir = "Mirage2019/output"  # Directory per salvare le immagini GASF
+n = 1  # Numero di righe (serie temporali) da processare per ogni label
 
 # Assicura che la directory di output esista
 if not os.path.exists(save_dir):
@@ -32,23 +35,25 @@ for index, row in df_grouped.iterrows():
         missing_elements = 10 - len(data)
         data = np.append(data, [0] * missing_elements)
 
-    # Creazione dei punti per la GASF (qui bin = 1)
-    num_of_samples_per_bin = 1
-    points = [
-        np.sum(data[j * num_of_samples_per_bin:(j + 1) * num_of_samples_per_bin])
-        for j in range(len(data) // num_of_samples_per_bin)
-    ]
-    all_series.append(points)
+    all_series.append(data)
 
 # Converte le serie in un array numpy
-X = np.array(all_series)
+all_series = np.array(all_series)
+
+# Calcolo del minimo e massimo globali su tutte le serie temporali
+X_min = np.min(all_series)
+X_max = np.max(all_series)
+
+# Funzione per normalizzare una serie temporale
+def min_max_normalize(series, X_min, X_max):
+    return (series - X_min) / (X_max - X_min)
+
+# Normalizzazione delle serie temporali
+normalized_series = [min_max_normalize(series, X_min, X_max) for series in all_series]
 
 # Calcolo del GASF
 gasf = GramianAngularField(sample_range=(0, 1), method='summation')
-#TODO
-#fare qui la  min-max normalization e poi fare la seguente chiamata
-#gasf = GramianAngularField(sample_range=None, method='summation')
-X_gasf = gasf.transform(X)
+X_gasf = gasf.transform(normalized_series)
 
 # Salvataggio delle immagini per ogni classe
 for idx, (index, row) in enumerate(df_grouped.iterrows()):
@@ -62,8 +67,6 @@ for idx, (index, row) in enumerate(df_grouped.iterrows()):
 
     # Estrae l'immagine GASF corrispondente
     gasf_img = X_gasf[idx] * 0.5 + 0.5
-    gamma = 0.25
-    gasf_img = np.power(gasf_img, gamma)
 
     # Salva l'immagine nella directory della classe
     filename = f"sample_{index + 1}.png"
@@ -71,3 +74,11 @@ for idx, (index, row) in enumerate(df_grouped.iterrows()):
     plt.imsave(filepath, gasf_img, cmap='viridis')
 
     print(f"Serie {index} salvata come immagine in {filepath}.")
+
+# Salvataggio di X_min e X_max
+min_max_file = os.path.join(save_dir, "min_max_values.txt")
+with open(min_max_file, "w") as f:
+    f.write(f"X_min: {X_min}\n")
+    f.write(f"X_max: {X_max}\n")
+
+print(f"Minimo e massimo salvati in {min_max_file}.")
