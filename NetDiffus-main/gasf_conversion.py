@@ -44,10 +44,7 @@ for index, row in df_grouped.iterrows():
 X = np.array(all_series)
 
 # Calcolo del GASF
-gasf = GramianAngularField(sample_range=(0, 1), method='summation')
-#TODO
-#fare qui la  min-max normalization e poi fare la seguente chiamata
-#gasf = GramianAngularField(sample_range=None, method='summation')
+gasf = GramianAngularField(sample_range=(0,1), method='summation')
 X_gasf = gasf.transform(X)
 
 # Salvataggio delle immagini per ogni classe
