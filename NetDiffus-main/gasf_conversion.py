@@ -28,12 +28,17 @@ series_records = []  # Lista per memorizzare le serie temporali e i label
 
 for index, row in df_grouped.iterrows():
     # Estrae i dati numerici (esclude l'ultima colonna)
-    data = row.iloc[0]
-
+    payload_lenght = row.iloc[0]
+    dir= row.iloc[2]
     # Nel caso i dati siano inferiori a 10, inseriamo dei dummy
-    if len(data) < 10:
-        missing_elements = 10 - len(data)
-        data = np.append(data, [0] * missing_elements)
+    if len(payload_lenght) < 10:
+        missing_elements = 10 - len(payload_lenght)
+        payload_lenght = np.append(payload_lenght, [0] * missing_elements)
+        dir= np.append(dir, [0] * missing_elements)
+
+    dir = np.where(dir == 0, -1, 1)
+
+    data = np.multiply(payload_lenght, dir)
 
     all_series.append(data)
     series_records.append({'serie_temporali': data.tolist(), 'label': row['label']})  # Memorizza i dati
@@ -83,7 +88,7 @@ for idx, (index, row) in enumerate(df_grouped.iterrows()):
     #plt.imsave(filepath, gasf_img, cmap='gray', vmin=0, vmax=1)
     imageio.imwrite(filepath, gasf_img, format=None)
 
-    print(f"Serie {index} salvata come immagine in {filepath}.")
+    #print(f"Serie {index} salvata come immagine in {filepath}.")
 
 # Salvataggio di X_min e X_max
 min_max_file = os.path.join(save_dir, "min_max_values.txt")
