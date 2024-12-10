@@ -20,7 +20,7 @@ df = pd.read_parquet(file_path)
 
 # Raggruppa per etichetta (ultima colonna) e seleziona i primi n elementi per gruppo
 df['label'] = df.iloc[:, -1]  # Aggiunge una colonna 'label' per chiarezza
-df_grouped = df.groupby('label')
+df_grouped = df
 
 # Raccolta di tutte le serie temporali per il fit congiunto
 all_series = []
@@ -73,6 +73,9 @@ for idx, (index, row) in enumerate(df_grouped.iterrows()):
 
     # Estrae l'immagine GASF corrispondente e porta in [0,1]
     gasf_img = X_gasf[idx] * 0.5 + 0.5
+
+    # Converti in uint8 SUPPORTATO DA IMAGEIO
+    #gasf_img_uint8 = (gasf_img * 255).astype(np.uint8)
 
     # Salva l'immagine in scala di grigi
     filename = f"sample_{index + 1}.npz"
