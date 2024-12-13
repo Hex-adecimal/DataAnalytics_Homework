@@ -18,6 +18,11 @@ Portarsi all'interno della cartella NetDiffus-main
 python3 scripts/image_train.py --data_dir dataset/output/ --image_size 128 --num_channels 128 --num_res_blocks 3 --diffusion_steps 1000 --noise_schedule cosine --learn_sigma True --class_cond True --rescale_learned_sigmas False --rescale_timesteps False --lr 1e-4 --batch_size 4
 ```
 Nota: nel file NetDiffus-main/scripts/script_util.py c'è la macro NUM_CLASSES impostata a 40; per lovare su più classi modificare questo parametro.
+Al fine di permettere il trining per le immagini di dimensioni 10px aggiungere sempre in script_util il seguente codice dopo linea 159
+```python
+elif image_size == 10:
+    channel_mult = (1, 2)
+```
 
 Se il processo viene killato sostituire i seguenti flag con questi valori:
 ```bash
